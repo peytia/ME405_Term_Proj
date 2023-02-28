@@ -11,6 +11,8 @@
     @mainpage
     @section    Software Design
 
+    @image html task_diagram.png
+
     @subsection Yaw Motor Task
     @subsection Pitch Motor Task
     @subsection Fire Control Task
