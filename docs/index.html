@@ -75,9 +75,10 @@ $(function() {
 <div class="contents">
 <div class="textblock"><h1><a class="anchor" id="SoftwareDesign"></a>
 Software Design</h1>
-<div class="image">
+<p>This page shows the overall current design of the software for the nerf turret. The image below shows a task diagram for the turret. This is where we document the share going between the tasks, the frequency of the tasks, and the priority of each task over one another. </p><div class="image">
 <img src="task_diagram.png" alt=""/>
 </div>
+<p>In each of the subsections below, a finite state machine is drawn for each corresponding task. While all tasks have FSM's, many are very simple and could be excluded. Others, like the controller, is quite a bit more complex.</p>
 <h2><a class="anchor" id="YawTask"></a>
 Yaw Motor Task</h2>
 <div class="image">

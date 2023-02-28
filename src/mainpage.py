@@ -12,7 +12,9 @@
     @section    SoftwareDesign Software Design
     This page shows the overall current design of the software for the nerf turret. The image below shows a
     task diagram for the turret. This is where we document the share going between the tasks, the frequency
-    of the tasks, and the priority of each task over one another.
+    of the tasks, and the priority of each task over one another. An important note: we are not using any
+    queues (at the moment), so any of the solid arrows in the task diagram below indicate a share. A share is
+    traditionally indicated by a dashed line.
     @image html task_diagram.png
 
     In each of the subsections below, a finite state machine is drawn for each corresponding task. While all
