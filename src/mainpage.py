@@ -9,13 +9,13 @@
     @date       February 28, 2023
 
     @mainpage
-    @section    Software Design
+    @section    SoftwareDesign Software Design
 
     @image html task_diagram.png
 
-    @subsection Yaw Motor Task
-    @subsection Pitch Motor Task
-    @subsection Fire Control Task
-    @subsection User Input Task
-    @subsection Camera Task
+    @subsection  YawTask Yaw Motor Task
+    @subsection  PitchTask Pitch Motor Task
+    @subsection  FireTask Fire Control Task
+    @subsection  UserTask User Input Task
+    @subsection  CameraTaskCamera Task
 '''
