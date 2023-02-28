@@ -8,6 +8,7 @@
     @author     Harrison Hirsch
     @date       February 28, 2023
 
+    @mainpage
     @section    Software Design
 
     @subsection Yaw Motor Task
