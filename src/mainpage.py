@@ -10,8 +10,14 @@
 
     @mainpage
     @section    SoftwareDesign Software Design
-
+    This page shows the overall current design of the software for the nerf turret. The image below shows a
+    task diagram for the turret. This is where we document the share going between the tasks, the frequency
+    of the tasks, and the priority of each task over one another.
     @image html task_diagram.png
+
+    In each of the subsections below, a finite state machine is drawn for each corresponding task. While all
+    tasks have FSM's, many are very simple and could be excluded. Others, like the controller, is quite a bit
+    more complex.
 
     @subsection  YawTask Yaw Motor Task
     @image html yaw_task.png
