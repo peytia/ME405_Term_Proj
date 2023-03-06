@@ -1,5 +1,5 @@
 import motor_run
-import mlx_cam
+# import mlx_cam
 
 if __name__ == '__main__':
-    mlx_cam.main()
+    motor_run.move(1)      # Spin once

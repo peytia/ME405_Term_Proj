@@ -23,7 +23,8 @@ def main():
                                 closed-loop step response tests.
     """
     # periodic_step_test()            # Rotate one revolution and stop
-    step_response_test()            # Run a step response, store the results, and plot the step response
+    # step_response_test()            # Run a step response, store the results, and plot the step response
+    # move(1, 0.1)            # Spin once
 
 
 def periodic_step_test():
@@ -92,6 +93,20 @@ def step_response_test():
             utime.sleep_ms(10)                  # Match rate of execution
         for dataPt in storedData:               # Write stored data to serial port
             u2.write(f'{dataPt[0]}, {dataPt[1]}\r\n')
+
+
+def move(rotations):
+    # rotations in number of base rotations
+    motor1 = motor_driver.MotorDriver('A10', 'B4', 'B5', 3)  # Set up motor 1
+    motor2 = motor_driver.MotorDriver('C1', 'A0', 'A1', 5)  # Set up motor 2
+    encoder1 = encoder_reader.EncoderReader('C6', 'C7', 8)  # Set up encoder 1
+    controller1 = motor_controller.MotorController(0.1, 0)  # Set up controller 1
+    while True:
+        encoderPosSpeed = encoder1.read()  # Update and read encoder value
+        controller1.set_setpoint(rotations*16384*5.8)  # Set controller setpoint to current step response value
+        desiredDuty = controller1.run(encoderPosSpeed[0])  # Run controller to calculate duty cycle
+        motor1.set_duty_cycle(desiredDuty)  # Set calculated duty cycle
+        motor2.set_duty_cycle(desiredDuty)  # Set calculated duty cycle
 
 
 def is_number(pt):
