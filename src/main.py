@@ -1,5 +1,5 @@
 """!
-@file mlx_cam.py
+@file main.py
 This file contains a wrapper that facilitates the use of a Melexis MLX90640
 thermal infrared camera for general use. The wrapper contains a class MLX_Cam
 whose use is greatly simplified in comparison to that of the base class,
@@ -232,8 +232,8 @@ if __name__ == "__main__":
                 for line in camera.get_csv(image.v_ir, limits=(0, 99)):
                     print(line)
             else:
-                camera.ascii_art(image.v_ir)
-            time.sleep_ms(10000)
+                camera.ascii_image(image.v_ir)
+            time.sleep_ms(1000)
 
         except KeyboardInterrupt:
             break
