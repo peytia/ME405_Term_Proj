@@ -63,6 +63,7 @@ class MLX_Cam:
         ## A local reference to the image object within the camera driver
         self._image = self._camera.image
 
+
     def ascii_image(self, array, pixel="██", textcolor="0;180;0"):
         """!
         @brief   Show low-resolution camera data as shaded pixels on a text
@@ -104,8 +105,10 @@ class MLX_Cam:
                 print(f"\033[38;2;{pix};{pix};{pix}m{pixel}", end='')
             print(f"\033[38;2;{textcolor}m")
 
+
     ## A "standard" set of characters of different densities to make ASCII art
     asc = " -.:=+*#%@"
+
 
     def ascii_art(self, array):
         """!
@@ -130,6 +133,7 @@ class MLX_Cam:
             print('')
         return
 
+
     def get_csv(self, array, limits=None):
         """!
         @brief   Generate a string containing image data in CSV format.
@@ -150,13 +154,14 @@ class MLX_Cam:
             line = ""
             for col in range(self._width):
                 pix = int((array[row * self._width + (self._width - col - 1)]
-                           * scale) + offset)
+                          * scale) + offset)
                 if col:
                     line += ","
                 line += f"{pix}"
-            #             line += "\r\n"
+#             line += "\r\n"
             yield line
         return
+
 
     def get_image(self):
         """!
@@ -235,7 +240,6 @@ def main():
 # The test code sets up the sensor, then grabs and shows an image in a terminal
 # every ten and a half seconds or so.
 ## @cond NO_DOXY don't document the test code in the driver documentation
-
 if __name__ == "__main__":
     main()
 
