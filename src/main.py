@@ -11,16 +11,17 @@ def main():
     # motor_run.move_yaw(0.5)
     # motor_run.move_pitch(360)
     # mlx_cam.main()
-    # servo.run()
+    # servo.run2(9)
 
-    s_button_pushed = task_share.Share('h', thread_protect=True, name="button_pushed")
-    s_yaw_pos = task_share.Share('h', thread_protect=True, name="yaw_pos")
-    s_pitch_pos = task_share.Share('h', thread_protect=True, name="pitch_pos")
-    s_picture_taken = task_share.Share('h', thread_protect=True, name="picture_taken")
-    s_delta_x = task_share.Share('h', thread_protect=True, name="delta_x")
-    s_delta_y = task_share.Share('h', thread_protect=True, name="delta_y")
+    s_button_pushed = task_share.Share('h', thread_protect=True, name='button_pushed')
+    s_yaw_pos = task_share.Share('h', thread_protect=True, name='yaw_pos')
+    s_pitch_pos = task_share.Share('h', thread_protect=True, name='pitch_pos')
+    s_picture_taken = task_share.Share('h', thread_protect=True, name='picture_taken')
+    s_delta_x = task_share.Share('h', thread_protect=True, name='delta_x')
+    s_delta_y = task_share.Share('h', thread_protect=True, name='delta_y')
+    s_on_target = task_share.Share('h', thread_protect=True, name='on_target')
 
-    shares = s_button_pushed, s_yaw_pos, s_pitch_pos, s_picture_taken, s_delta_x, s_delta_y
+    shares = s_button_pushed, s_yaw_pos, s_pitch_pos, s_picture_taken, s_delta_x, s_delta_y, s_on_target
 
     init_task0 = cotask.Task(task0_init, name='Task_0', priority=10, shares=shares)
     yaw_task1 = cotask.Task(task1_yaw, name='Task_1', priority=10, period=50, shares=shares)
@@ -47,17 +48,18 @@ def main():
 
 
 def task0_init(shares):     # Initialization of shares on startup
-    s_button_pushed, s_yaw_pos, s_pitch_pos, s_picture_taken, s_delta_x, s_delta_y = shares
+    s_button_pushed, s_yaw_pos, s_pitch_pos, s_picture_taken, s_delta_x, s_delta_y, s_on_target = shares
     s_button_pushed.put(False)  # Button is not pushed
     s_yaw_pos.put(0)            # Yaw at 0 degrees
     s_pitch_pos.put(0)          # Pitch at 0 degrees
     s_picture_taken.put(False)  # Picture not taken
     s_delta_x.put(0)            # Delta x at 0
     s_delta_y.put(0)            # Delta y at 0
+    s_on_target.put(False)      # Not on target
 
 
 def task1_yaw(shares):
-    s_button_pushed, s_yaw_pos, s_pitch_pos, s_picture_taken, s_delta_x, s_delta_y = shares
+    s_button_pushed, s_yaw_pos, s_pitch_pos, s_picture_taken, s_delta_x, s_delta_y, s_on_target = shares
 
     S0 = 0  # Motor setup
     S1 = 1  # Hold position stationary
@@ -95,7 +97,7 @@ def task2_camera(shares):
 
 
 def task3_pitch(shares):
-    s_button_pushed, s_yaw_pos, s_pitch_pos, s_picture_taken, s_delta_x, s_delta_y = shares
+    s_button_pushed, s_yaw_pos, s_pitch_pos, s_picture_taken, s_delta_x, s_delta_y, s_on_target = shares
 
     S0 = 0  # Motor setup
     S1 = 1  # Hold position stationary
@@ -120,7 +122,7 @@ def task3_pitch(shares):
 
 
 def task4_fire(shares):
-    s_button_pushed, s_yaw_pos, s_pitch_pos, s_picture_taken, s_delta_x, s_delta_y = shares
+    s_button_pushed, s_yaw_pos, s_pitch_pos, s_picture_taken, s_delta_x, s_delta_y, s_on_target = shares
 
     S1 = 1  # Idle
     S2 = 2  # Fire
@@ -129,10 +131,14 @@ def task4_fire(shares):
     while True:
 
         if state == S1:
-            if True:    # if aiming at target:
+            if s_on_target.get():   # if aiming at target:
                 state = S2  # Fire state
         else:
             pass    # Continue idle
+
+        if state == S2:     # Fire state
+            servo.run()     # Actuate servo
+            state = S1      # Return to idle state
 
 
 def task5_button(shares):
