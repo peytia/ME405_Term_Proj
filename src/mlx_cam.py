@@ -1,5 +1,10 @@
 """!
 @file mlx_cam.py
+
+RAW VERSION
+This version uses a stripped down MLX90640 driver which produces only raw data,
+not calibrated data, in order to save memory.
+
 This file contains a wrapper that facilitates the use of a Melexis MLX90640
 thermal infrared camera for general use. The wrapper contains a class MLX_Cam
 whose use is greatly simplified in comparison to that of the base class,
@@ -61,8 +66,7 @@ class MLX_Cam:
         self._camera.setup()
 
         ## A local reference to the image object within the camera driver
-        self._image = self._camera.image
-
+        self._image = self._camera.raw
 
     def ascii_image(self, array, pixel="██", textcolor="0;180;0"):
         """!
@@ -109,7 +113,6 @@ class MLX_Cam:
     ## A "standard" set of characters of different densities to make ASCII art
     asc = " -.:=+*#%@"
 
-
     def ascii_art(self, array):
         """!
         @brief   Show a data array from the IR image as ASCII art.
@@ -118,7 +121,7 @@ class MLX_Cam:
                  by a bad pixel in the camera. 
         @param   array The array to be shown, probably @c image.v_ir
         """
-        scale = 10 / (max(array) - min(array))
+        scale = len(MLX_Cam.asc) / (max(array) - min(array))
         offset = -min(array)
         for row in range(self._height):
             line = ""
@@ -132,7 +135,6 @@ class MLX_Cam:
                     print("><", end='')
             print('')
         return
-
 
     def get_csv(self, array, limits=None):
         """!
@@ -154,33 +156,41 @@ class MLX_Cam:
             line = ""
             for col in range(self._width):
                 pix = int((array[row * self._width + (self._width - col - 1)]
-                          * scale) + offset)
+                          + offset) * scale)
                 if col:
                     line += ","
                 line += f"{pix}"
-#             line += "\r\n"
             yield line
         return
-
 
     def get_image(self):
         """!
         @brief   Get one image from a MLX90640 camera.
         @details Grab one image from the given camera and return it. Both
                  subframes (the odd checkerboard portions of the image) are
-                 grabbed and combined. This assumes that the camera is in the
-                 ChessPattern (default) mode as it probably should be.
+                 grabbed and combined (maybe; this is the raw version, so the
+                 combination is sketchy and not fully tested). It is assumed
+                 that the camera is in the ChessPattern (default) mode as it
+                 probably should be.
         @returns A reference to the image object we've just filled with data
         """
         for subpage in (0, 1):
             while not self._camera.has_data:
                 time.sleep_ms(50)
                 print('.', end='')
-            self._camera.read_image(subpage)
-            state = self._camera.read_state()
-            image = self._camera.process_image(subpage, state)
+            image = self._camera.read_image(subpage)
 
         return image
+
+    def find_max(self, array):
+        hottest = max(array)
+        count = 0
+        hot_indices = []
+        for p_idx in range(self._width*self._height - 1):
+            if array[p_idx] == hottest:
+                count += 1
+                hot_indices.append([p_idx // self._width, p_idx % self._width])
+        return hot_indices, count
 
 
 def main():
@@ -214,22 +224,24 @@ def main():
             print("Click.", end='')
             begintime = time.ticks_ms()
             image = camera.get_image()
+            # print(f'{image[0]}, {image[767]}')
+            print('\n', camera.find_max(image))
             print(f" {time.ticks_diff(time.ticks_ms(), begintime)} ms")
 
             # Can show image.v_ir, image.alpha, or image.buf; image.v_ir best?
             # Display pixellated grayscale or numbers in CSV format; the CSV
             # could also be written to a file. Spreadsheets, Matlab(tm), or
             # CPython can read CSV and make a decent false-color heat plot.
-            show_image = False
+            show_image = True
             show_csv = False
             if show_image:
-                camera.ascii_image(image.buf)
+                camera.ascii_image(image)
             elif show_csv:
-                for line in camera.get_csv(image.v_ir, limits=(0, 99)):
+                for line in camera.get_csv(image, limits=(0, 99)):
                     print(line)
             else:
-                camera.ascii_image(image.v_ir)
-            time.sleep_ms(1000)
+                camera.ascii_art(image)
+            time.sleep_ms(10000)
 
         except KeyboardInterrupt:
             break
@@ -242,5 +254,6 @@ def main():
 ## @cond NO_DOXY don't document the test code in the driver documentation
 if __name__ == "__main__":
     main()
+
 
 ## @endcond End the block which Doxygen should ignore
