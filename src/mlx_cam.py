@@ -176,24 +176,20 @@ class MLX_Cam:
         """
         for subpage in (0, 1):
             while not self._camera.has_data:
-                time.sleep_ms(50)
-                print('.', end='')
+                time.sleep_ms(10)
+                # print('.', end='')
             image = self._camera.read_image(subpage)
 
         return image
 
     def find_max(self, array):
         hottest = max(array)
-        count = 0
-        hot_indices = []
         for p_idx in range(self._width*self._height - 1):
             if array[p_idx] == hottest:
-                count += 1
-                hot_indices.append([p_idx // self._width, p_idx % self._width])
-        return hot_indices, count
+                return [(self._height/2 - (p_idx // self._width))*1.566, -1.566*(self._width/2 - (self._width - (p_idx % self._width) - 1))]
 
 
-def main():
+def run():
     # The following import is only used to check if we have an STM32 board such
     # as a Pyboard or Nucleo; if not, use a different library
     try:
@@ -217,16 +213,16 @@ def main():
 
     # Create the camera object and set it up in default mode
     camera = MLX_Cam(i2c_bus)
+    # yield 0
 
     while True:
         try:
             # Get and image and see how long it takes to grab that image
-            print("Click.", end='')
-            begintime = time.ticks_ms()
+            # print("Click.", end='')
+            # begintime = time.ticks_ms()
             image = camera.get_image()
-            # print(f'{image[0]}, {image[767]}')
-            print('\n', camera.find_max(image))
-            print(f" {time.ticks_diff(time.ticks_ms(), begintime)} ms")
+            deltas = camera.find_max(image)
+            # print(f" {time.ticks_diff(time.ticks_ms(), begintime)} ms")
 
             # Can show image.v_ir, image.alpha, or image.buf; image.v_ir best?
             # Display pixellated grayscale or numbers in CSV format; the CSV
@@ -241,19 +237,18 @@ def main():
                     print(line)
             else:
                 camera.ascii_art(image)
-            time.sleep_ms(10000)
+            time.sleep_ms(40)
+            print(deltas)
 
         except KeyboardInterrupt:
             break
-
-    print("Done.")
 
 
 # The test code sets up the sensor, then grabs and shows an image in a terminal
 # every ten and a half seconds or so.
 ## @cond NO_DOXY don't document the test code in the driver documentation
 if __name__ == "__main__":
-    main()
+    run()
 
 
 ## @endcond End the block which Doxygen should ignore
