@@ -27,7 +27,7 @@ REGISTER_MAP = {
         field_desc('data_hold',         1,  2),
         field_desc('subpage_repeat',    1,  3),
         field_desc('repeat_select',     3,  4),
-        field_desc('refresh_rate',      3,  7),
+        field_desc('refresh_rate',      6,  7),
         field_desc('adc_resolution',    2, 10),
         field_desc('read_pattern',      1, 12),
     ),
