@@ -29,6 +29,7 @@ from machine import Pin, I2C
 from mlx90640 import MLX90640
 from mlx90640.calibration import NUM_ROWS, NUM_COLS, IMAGE_SIZE, TEMP_K
 from mlx90640.image import ChessPattern, InterleavedPattern
+from array import array as ar
 
 
 class MLX_Cam:
@@ -184,9 +185,41 @@ class MLX_Cam:
 
     def find_max(self, array):
         hottest = max(array)
-        for p_idx in range(self._width*self._height - 1):
+        for p_idx in range(self._width * self._height - 1):
             if array[p_idx] == hottest:
-                return [(self._height/2 - (p_idx // self._width))*1.2566, -1.2566*(self._width/2 - (self._width - (p_idx % self._width) - 1))]
+                return [(self._height / 2 - (p_idx // self._width)) * 1.2566,
+                        -1.2566 * (self._width / 2 - (self._width - (p_idx % self._width) - 1))]
+
+    def gaussian_filt(self, array):
+        matrix = []
+        temp_row = ar('f', [])
+        mask = ar('f', [1 / 16, 1 / 8, 1 / 16,
+                        1 / 8, 1 / 4, 1 / 8,
+                        1 / 16, 1 / 8, 1 / 16])
+        filtered_array = ar('f', [])
+        for p_idx in range(self._width * self._height):
+            if (p_idx + 1) % 32 == 0:
+                temp_row.append(array[p_idx])
+                matrix.append(temp_row)
+                temp_row = ar('f', [])
+            else:
+                temp_row.append(array[p_idx])
+        for i in range(len(matrix) - 2):
+            for j in range(len(matrix[i]) - 2):
+                mask_values = [a * b for a, b in zip(mask[0:3], matrix[i][j:j + 3])] + \
+                              [a * b for a, b in zip(mask[3:6], matrix[i + 1][j:j + 3])] + \
+                              [a * b for a, b in zip(mask[6:9], matrix[i + 2][j:j + 3])]
+                filtered_array.append(sum(mask_values))
+
+        return filtered_array
+
+    def find_person(self, array):
+        filtered_array = self.gaussian_filt(array)
+        hottest = max(filtered_array)
+        for p_idx in range(len(filtered_array)):
+            if filtered_array[p_idx] == hottest:
+                return [((self._height - 2) / 2 - (p_idx // (self._width - 2))) * 1.2566,
+                        -1.2566 * ((self._width - 2) / 2 - ((self._width - 2) - (p_idx % (self._width - 2)) - 1))]
 
 
 def camera_setup():
@@ -247,6 +280,5 @@ def run(cam):
 if __name__ == "__main__":
     camera = camera_setup()
     run(camera)
-
 
 ## @endcond End the block which Doxygen should ignore
