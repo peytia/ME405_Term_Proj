@@ -11,6 +11,7 @@ import task_share
 
 def main():
     input('Press enter to start')
+    utime.sleep(5)
 
     # motor_run.move_yaw(30)
     # motor_run.move_pitch(10)
@@ -87,7 +88,7 @@ def task2_camera(shares):
     s_button_pushed, s_yaw_pos, s_yaw_vel, s_pitch_pos, s_pitch_vel, s_desired_pos_x, s_desired_pos_y, s_on_target, s_fired = shares
 
     camera = mlx_cam.camera_setup()
-    start_time = utime.ticks_ms()
+    # start_time = utime.ticks_ms()
 
     S1 = 1  # Idle
     S2 = 2  # Take picture
@@ -113,10 +114,10 @@ def task2_camera(shares):
             [delta_y, delta_x] = mlx_cam.run(camera)  # Take picture
             print('Picture taken')
             print(delta_x, delta_y)
-            stop_time = utime.ticks_ms()
-            diff_time = utime.ticks_diff(stop_time, start_time)
-            print(diff_time)
-            if (-10 < delta_x < 10) and (-10 < delta_y < 10) and diff_time >= 5000:
+            # stop_time = utime.ticks_ms()
+            # diff_time = utime.ticks_diff(stop_time, start_time)
+            # print(diff_time)
+            if (-10 < delta_x < 10) and (-10 < delta_y < 10):
                 s_on_target.put(True)
                 s_desired_pos_y.put(s_pitch_pos.get())
                 s_desired_pos_x.put(s_yaw_pos.get())
