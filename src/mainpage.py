@@ -18,8 +18,10 @@
     @image html task_diagram.png
 
     In each of the subsections below, a finite state machine is drawn for each corresponding task. While all
-    tasks have FSM's, many are very simple and could be excluded. Others, like the controller, is quite a bit
-    more complex.
+    tasks have FSM's, many are very simple and could be excluded. Others, like the camera task, is quite a bit
+    more complex. With this design, the camera is central to the operation of the turret and acts as an overall controller
+    or "mastermind" of the system. The camera task has several states, can see the position and velocity of the whole system,
+    can tell the motor tasks what the desires position is, and can raise flags to tell the system when to fire.
 
     @subsection  YawTask Yaw Motor Task
     @image html yaw_task.png
