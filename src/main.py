@@ -1,12 +1,22 @@
-import utime
+"""!
+    @file           main.py
+    @details        This file contains a program that runs some tasks, and some
+                    inter-task communication variables. The tasks set up two separate
+                    motors, run each of them through a different step response, and
+                    outputs the results to a serial port.
 
+    @author         Peyton Archibald
+    @author         Harrison Hirsch
+    @date           March 14, 2023
+"""
+
+import utime
 import mlx_cam
 import gc
 import motor_run
 import servo
 import cotask
 import task_share
-# import button
 
 
 def main():
@@ -192,20 +202,6 @@ def task4_fire(shares):
         #     state = S1      # Return to idle state
 
         yield 0
-
-
-# def task5_button(shares):
-#     s_button_pushed, s_yaw_pos, s_yaw_vel, s_pitch_pos, s_pitch_vel, s_desired_pos_x, s_desired_pos_y, s_on_target, s_fired = shares
-#
-#     print(';bew')
-#     button.setup()
-#     print('sakdbg')
-#
-#     while True:
-#         if button.button_press:
-#             s_button_pushed.put(True)
-#
-#         yield 0
 
 
 if __name__ == '__main__':
