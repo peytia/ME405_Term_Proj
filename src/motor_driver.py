@@ -32,7 +32,7 @@ class MotorDriver:
             @param  in2pin      The pin 2 for the
         """
 
-        print("Creating a motor driver")
+        # print("Creating a motor driver")
         # Enable pin
         self.enable_pin = pyb.Pin(en_pin, pyb.Pin.OUT_OD, pyb.Pin.PULL_UP)  # Setting up the enable pin, and setting it high
         self.enable_pin.high()

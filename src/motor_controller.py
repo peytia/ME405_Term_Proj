@@ -29,7 +29,7 @@ class MotorController:
         """  
         self.Kp = initial_Kp
         self.set_point = initial_set_point
-        print("Creating a motor controller")
+        # print("Creating a motor controller")
 
     def run(self, current_point):
         """!

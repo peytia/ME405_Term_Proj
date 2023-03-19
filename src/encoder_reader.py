@@ -31,7 +31,7 @@ class EncoderReader:
             @param  pinA        The pin A for the encoder which channel 1 output is on
             @param  pinB        The pin B for the encoder which channel 2 output is on.
         """
-        print("Creating an encoder reader")
+        # print("Creating an encoder reader")
         self.pinA = pyb.Pin(pinA)
         self.pinB = pyb.Pin(pinB)
         self.encodertimer = pyb.Timer(timer, prescaler=0, period=65535)
