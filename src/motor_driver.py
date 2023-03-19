@@ -27,9 +27,10 @@ class MotorDriver:
                                 speed of the motor using a PWM signal. Additionally, upon instantiation,
                                 the enable pin for the motor controler is set to high, enabling the motor
                                 for use.
-            @param  en_pin      The enable pin which is used to enable the motor controler
+            @param  en_pin      The enable pin which is used to enable the motor controller
             @param  in1pin      The pin 1 for the motor
-            @param  in2pin      The pin 2 for the
+            @param  in2pin      The pin 2 for the motor
+            @param  timer       The timer number that the motor uses
         """
 
         # print("Creating a motor driver")

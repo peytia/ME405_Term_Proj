@@ -27,7 +27,7 @@ class EncoderReader:
             @details            Upon instantiation, the encoder object is created with the input parameters
                                 of the timer and channel pins which the encoder outputs on. Additionally,
                                 the position, count, and delta variables are created and zeroed.
-            @param  timer       The timer number which the encoder uses
+            @param  timer       The timer number that the encoder uses
             @param  pinA        The pin A for the encoder which channel 1 output is on
             @param  pinB        The pin B for the encoder which channel 2 output is on.
         """
