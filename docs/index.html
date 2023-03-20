@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.9.6"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>ME405 Term Project: ME405 Term Project</title>
+<title>ME 405 Term Project: Nerf Turret: ME 405 Term Project: Nerf Turret</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -21,9 +21,9 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">ME405 Term Project<span id="projectnumber">&#160;0.1.0</span>
+   <div id="projectname">ME 405 Term Project: Nerf Turret
    </div>
-   <div id="projectbrief">This is the software documentation of a turreted nerf gun with a thermal camera sensor for aiming.</div>
+   <div id="projectbrief">This page shows the overall current design of the software for the nerf turret.</div>
   </td>
  </tr>
  </tbody>
@@ -70,7 +70,7 @@ $(function() {
 </div>
 
 <div><div class="header">
-  <div class="headertitle"><div class="title">ME405 Term Project </div></div>
+  <div class="headertitle"><div class="title">ME 405 Term Project: Nerf Turret </div></div>
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><h1><a class="anchor" id="SoftwareDesign"></a>
@@ -78,7 +78,7 @@ Software Design</h1>
 <p>This page shows the overall current design of the software for the nerf turret. The image below shows a task diagram for the turret. This is where we document the share going between the tasks, the frequency of the tasks, and the priority of each task over one another. An important note: we are not using any queues (at the moment), so any of the solid arrows in the task diagram below indicate a share. A share is traditionally indicated by a dashed line. </p><div class="image">
 <img src="task_diagram.png" alt=""/>
 </div>
-<p>In each of the subsections below, a finite state machine is drawn for each corresponding task. While all tasks have FSM's, many are very simple and could be excluded. Others, like the controller, is quite a bit more complex.</p>
+<p>In each of the subsections below, a finite state machine is drawn for each corresponding task. While all tasks have FSM's, many are very simple and could be excluded. Others, like the camera task, is quite a bit more complex. With this design, the camera is central to the operation of the turret and acts as an overall controller or "mastermind" of the system. The camera task has several states, can see the position and velocity of the whole system, can tell the motor tasks what the desires position is, and can raise flags to tell the system when to fire.</p>
 <h2><a class="anchor" id="YawTask"></a>
 Yaw Motor Task</h2>
 <div class="image">
@@ -103,11 +103,6 @@ User Input Task</h2>
 Camera Task</h2>
 <div class="image">
 <img src="camera_task.png" alt=""/>
-</div>
-<h2><a class="anchor" id="ControllerTask"></a>
-Controller Task</h2>
-<div class="image">
-<img src="controller_task.png" alt=""/>
 </div>
  </div></div><!-- PageDoc -->
 </div><!-- contents -->
