@@ -38,6 +38,4 @@
     @subsection  CameraTask Camera Task
     @image html camera_task.png
 
-    @subsection  ControllerTask Controller Task
-    @image html controller_task.png
 '''
