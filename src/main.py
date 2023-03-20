@@ -1,9 +1,9 @@
 """!
     @file           main.py
-    @details        This file contains a program that runs some tasks, and some
-                    inter-task communication variables. The tasks set up two separate
-                    motors, run each of them through a different step response, and
-                    outputs the results to a serial port.
+    @details        This file contains a program that runs all the turret tasks, and some
+                    inter-task communication variables in the form of shares. The tasks set up two separate
+                    pitch and yaw motors and a thermal camera, runs all of them at different specified intervals, and
+                    fires a dart at the nearest person using a servo
 
     @author         Peyton Archibald
     @author         Harrison Hirsch
@@ -20,6 +20,13 @@ import task_share
 
 
 def main():
+    """!
+        @brief                  Serves as a main function to run each finite state machine in a task-based fashion
+        @details                When this function is called, each task, implemented as a finite state machine, will be
+                                run simultaneously. main() is responsible for initiating the task sequence, defining
+                                inter-task communication variables in the form of shares, initializing each FSM as
+                                tasks, and continuously calling them at appropriate time intervals.
+    """
     input('Press enter to start')
     utime.sleep(5)
 
@@ -65,8 +72,13 @@ def main():
 
 
 def task0_init(shares):     # Initialization of shares on startup
-    s_button_pushed, s_yaw_pos, s_yaw_vel, s_pitch_pos, s_pitch_vel, s_desired_pos_x, s_desired_pos_y, s_on_target, s_fired = shares
-
+    """!
+        @brief                  Runs all the necessary share initializations
+        @details                Before all the FSMs are run, this function resets all the shares to their default
+                                values, ensuring there are no errors due to residual values left behind from the last
+                                time main() was called.
+        @param  shares          The list of inter-task communication variables
+    """
     s_button_pushed, s_yaw_pos, s_yaw_vel, s_pitch_pos, s_pitch_vel, s_desired_pos_x, s_desired_pos_y, s_on_target, s_fired = shares
     s_button_pushed.put(True)       # Button is not pushed
     s_yaw_pos.put(0)                # Yaw at 0 degrees
@@ -74,12 +86,21 @@ def task0_init(shares):     # Initialization of shares on startup
     s_pitch_pos.put(0)              # Pitch at 0 degrees
     s_pitch_vel.put(0)              # Pitch velocity 0
     s_desired_pos_x.put(180)        # Desired x at 180
-    s_desired_pos_y.put(0)         # Desired y at 10
+    s_desired_pos_y.put(0)          # Desired y at 10
     s_on_target.put(False)          # Not on target
     s_fired.put(0)                  # Not fired
 
 
 def task1_yaw(shares):
+    """!
+        @brief                  Task that implements the yaw motor function in the form of an FSM
+        @details                On the first call of this function, the motor responsible for yaw is initialized with
+                                correct pins and timers. Then, the motor current position and desired position are
+                                continuously updated and assigned to shares.
+        @param  shares          The list of inter-task communication variables
+        @yield                  A placeholder to signify that one loop of the function has been completed and that other
+                                tasks can be run if appropriate
+    """
     s_button_pushed, s_yaw_pos, s_yaw_vel, s_pitch_pos, s_pitch_vel, s_desired_pos_x, s_desired_pos_y, s_on_target, s_fired = shares
 
     yaw_motor = motor_run.Motor('A10', 'B4', 'B5', 3, 'C6', 'C7', 8, 0.1, 0)    # Initialize yaw motor
@@ -95,6 +116,16 @@ def task1_yaw(shares):
 
 
 def task2_camera(shares):
+    """!
+        @brief                  Task that implements the camera motor function in the form of an FSM and acts as a
+                                controller for the entire system.
+        @details                On the first call of this function, the thermal camera is initialized through mlx_cam.
+                                Then, the tasks are run through, determining when to take a picture and whether to
+                                actuate the servo in the firing mechanism.
+        @param  shares          The list of inter-task communication variables
+        @yield                  A placeholder to signify that one loop of the function has been completed and that other
+                                tasks can be run if appropriate
+    """
     s_button_pushed, s_yaw_pos, s_yaw_vel, s_pitch_pos, s_pitch_vel, s_desired_pos_x, s_desired_pos_y, s_on_target, s_fired = shares
 
     camera = mlx_cam.camera_setup()
@@ -162,6 +193,15 @@ def task2_camera(shares):
 
 
 def task3_pitch(shares):
+    """!
+        @brief                  Task that implements the pitch motor function in the form of an FSM
+        @details                On the first call of this function, the motor responsible for pitch is initialized with
+                                correct pins and timers. Then, the motor current position and desired position are
+                                continuously updated and assigned to shares.
+        @param  shares          The list of inter-task communication variables
+        @yield                  A placeholder to signify that one loop of the function has been completed and that other
+                                tasks can be run if appropriate
+    """
     s_button_pushed, s_yaw_pos, s_yaw_vel, s_pitch_pos, s_pitch_vel, s_desired_pos_x, s_desired_pos_y, s_on_target, s_fired = shares
 
     pitch_motor = motor_run.Motor('C1', 'A0', 'A1', 5, 'B6', 'B7', 4, 0.1, 0)  # Initialize pitch motor
@@ -178,6 +218,14 @@ def task3_pitch(shares):
 
 
 def task4_fire(shares):
+    """!
+        @brief                  Task that implements the servo function to fire a dart in the form of an FSM
+        @details                When the camera task determines that a target is within the gun sights, a conditional
+                                in this task signals the servo to actuate, pushing a dart through the flywheels.
+        @param  shares          The list of inter-task communication variables
+        @yield                  A placeholder to signify that one loop of the function has been completed and that other
+                                tasks can be run if appropriate
+    """
     s_button_pushed, s_yaw_pos, s_yaw_vel, s_pitch_pos, s_pitch_vel, s_desired_pos_x, s_desired_pos_y, s_on_target, s_fired = shares
 
     S1 = 1  # Idle
